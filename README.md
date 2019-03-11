@@ -1,2 +1,2 @@
 # Time-series-forecasting
-This is time series forecasting using machine learning and Deep learning 
+Time series forecasting using machine learning for Product level, Product subcategory level,State level and regional level
