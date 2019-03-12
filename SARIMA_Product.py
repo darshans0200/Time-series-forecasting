@@ -10,7 +10,6 @@ import pandas as pd
 import statsmodels.api as sm
 import matplotlib
 import pickle
-
 import statsmodels.api as sm  
 from statsmodels.tsa.stattools import acf  
 from statsmodels.tsa.stattools import pacf
@@ -55,12 +54,12 @@ m=pd.merge(df, prod, on='Item_number_ID')
 
 products=m.Product.unique()
 #products=m.loc[(['Product']!='MILK')]
+
 print (products)
 for item in products:
     print (item)
     if item=='MILK':
         continue
-#paneer=m.loc[(m['Product'] == 'PANEER')]
     paneer=m.loc[(m['Product']==item)]
     cols = ['Id', 'Year', 'Month', 'Day', 'Item_number_ID',
             'Customer_Account_ID', 'regionID', 'Amount', 'productName',
@@ -102,23 +101,29 @@ for item in products:
 
     #print(results.summary().tables[1])
 
-    #start_index = '2018-11-01'
-    #end_index = '2019-01-31'
-    #forecast_test = results.predict(start=start_index, end=end_index)
+#Test set prediction
 
-    #forecast_test.head()
+#start_index = '2018-11-01'
+#end_index = '2019-01-31'
+#forecast_test = results.predict(start=start_index, end=end_index)
 
-    #forecast_test=forecast_test.to_frame(name=None)
+#forecast_test.head()
 
-    #forecast_test=forecast_test.rename(columns = {0:'Quantity_predicated'})
+#forecast_test=forecast_test.to_frame(name=None)
 
-    #index = pd.date_range(start="2018-11-01", end="2019-01-31")
+#forecast_test=forecast_test.rename(columns = {0:'Quantity_predicated'})
 
-    #forecast_test['Stime']=index
+#index = pd.date_range(start="2018-11-01", end="2019-01-31")
 
-    #forecast_test.set_index('Stime', inplace=True)
+#forecast_test['Stime']=index
+
+#forecast_test.set_index('Stime', inplace=True)
+
+
 
 '''
+#test set error
+
 forecast_test_error = X_test['Quantity']-forecast_test['Quantity_predicated']
 
 mean_forecast_test_error = np.mean(forecast_test_error)
@@ -138,17 +143,19 @@ def mean_absolute_percentage_test_error(y_true, y_pred):
 
 
 MAPE= mean_absolute_percentage_test_error(X_test['Quantity'],forecast_test['Quantity_predicated'])
-MAPE
+print(MAPE)
+
 X_test.shape,forecast_test.shape
 
 pjme_test=pd.merge(X_test,forecast_test, left_index=True, right_index=True)
 
 MAPE= mean_absolute_percentage_train_error(pjme_test['Quantity'],pjme_test['Quantity_predicated'])
-MAPE
+print(MAPE)
 
 pjme_test.plot(figsize=(15, 6))
 plt.show()
 
+#another method for predict
 #pred_uc = results.get_forecast(steps=92)
 #pred_ci = pred_uc.conf_int()
 
@@ -162,11 +169,16 @@ forecast_train=forecast_train.rename(columns = {0:'Quantity_predicated'})
 forecast_train.head()
 forecast_train.tail()
 
+#Train set prediction
+
 index = pd.date_range(start="2018-04-01", end="2018-10-31")
 forecast_train['Stime']=index
 forecast_train.set_index('Stime', inplace=True)
 forecast_train.head()
 X_train.head()
+
+#Train set error
+
 forecast_train_error = X_train['Quantity']-forecast_train['Quantity_predicated']
 mean_forecast_train_error = np.mean(forecast_train_error)
 print(mean_forecast_train_error)
@@ -183,11 +195,13 @@ print(rmse_test)
 def mean_absolute_percentage_train_error(y_true, y_pred): 
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 MAPE= mean_absolute_percentage_train_error(X_train['Quantity'],forecast_train['Quantity_predicated'])
-MAPE
+print(MAPE)
 
 pjme_train=pd.merge(X_train,forecast_train, left_index=True, right_index=True)
+
 MAPE= mean_absolute_percentage_train_error(pjme_train['Quantity'],pjme_train['Quantity_predicated'])
-MAPE
+print(MAPE)
+
 pjme_train.plot(figsize=(15, 6))
 plt.show()
 
@@ -199,6 +213,8 @@ plt.show()
 
 
 '''
+#Forecast month on unseen data
+
 start_index = '2019-01-28'
 end_index = '2019-02-23'
 forecast = results.predict(start=start_index, end=end_index)
