@@ -47,10 +47,12 @@ print(Forecast.head())
 
 #prod 
 mydb=mysql.connector.connect(host="43.224.157.214", user="siddas", passwd="siddas@123", database="diztro_reports")
+
 #UP's
 #mydb=mysql.connector.connect(host="localhost", user="siddas", passwd="siddas@123", database="diztro_reports")
+
 mycursor = mydb.cursor()
-#sql = "INSERT INTO dldump (storeid, fname,ProcessedPath,status,fridgeid) VALUES (%s, %s,%s, %s,%s)"
+
 
 dict=[] #date, quantity, version, product
 for index,row in Forecast.iterrows():
@@ -68,14 +70,8 @@ year,month,day=start_date.split('-')
 yrmonth=month+'/'+year
 dict2=[] #date, quantity, version, product
 Forecast_month=Forecast.iloc[0]
-#ind=row_iterator.next()
-print('first row estmiat',Forecast_month)
-'''
-for index,row in Forecast.iterrows():
-    dict2.append((index,row['Quantity_predicated'],version,Product))
-    print (index,row['Quantity_predicated'])
-''' 
-#print(mydb) 
+print('first row estmation',Forecast_month)
+
 
 oldstart=(datetime.datetime.strptime(start_date,"%Y-%m-%d").date()) -datetime.timedelta(days=183)
 #print(oldstart)
@@ -87,31 +83,23 @@ Forecast_old=Forecast_old.rename(columns = {0:'Quantity_predicated'})
 index = pd.date_range(start=oldstart, end=oldend)
 Forecast_old['Stime']=index
 
-#Forecast_old.set_index('Stime', inplace=True)
-
 Forecast_old=Forecast_old.resample('M', on='Stime').sum()
 print(Forecast_old)
 
-#Forecast_old = Forecast_old['Quantity_predicated'].resample('M').sum()
-
+#Last six months average
 average=Forecast_old['Quantity_predicated'].mean()
-
 print(average)
+
 target=(Forecast_month-average)/average
 print(target)
 
-#use it whenever required
-#target.reset_index(inplace=True) # Resets the index, makes factor a column
-#target.drop('Stime',axis=1,inplace=True)
-
-
-#target=target.drop(['Stime'],axis=1)
 percent=target['Quantity_predicated']
-print(type(percent))
 print(percent)
+
 month_tgt=Forecast_month['Quantity_predicated']
 val2 = (yrmonth, Product,'All',percent,month_tgt)
 print(val2)
+
 sql2 = "INSERT INTO ml_monthly_estimation (YearMonth,Product,item_number_id,target_percent,target_quantity) VALUES (%s,%s,%s,%s,%s)"
 mycursor.execute(sql2, val2)
 mydb.commit()
