@@ -99,7 +99,7 @@ for item in products:
             except:
                 continue
             
-    print('The best model is: SARIMA{}x{} - AIC:{}'+item.format(lowest_parm, lowest_param_seasonal, lowest_aic))     
+    print('The best model is: SARIMA{}x{} - AIC:{}'.format(lowest_parm, lowest_param_seasonal, lowest_aic))     
 
     mod = sm.tsa.statespace.SARIMAX(paneer,
                                     order=lowest_parm,
