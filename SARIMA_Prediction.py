@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Wed Mar  6 09:36:29 2019
@@ -9,13 +10,12 @@ import sys
 import pandas as pd
 import warnings
 #import itertools
-#import numpy as np
-#import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 warnings.filterwarnings("ignore")
 #plt.style.use('fivethirtyeight')
 import pandas as pd
 import statsmodels.api as sm
-#import matplotlib
 import datetime
 import mysql.connector
 
@@ -46,10 +46,8 @@ Forecast['Stime']=index1
 print(Forecast.head())
 
 #prod 
-mydb=mysql.connector.connect(host="43.224.157.214", user="siddas", passwd="siddas@123", database="diztro_reports")
+mydb=mysql.connector.connect(host="**.***.***.***", user="***", passwd="***", database="***")
 
-#UP's
-#mydb=mysql.connector.connect(host="localhost", user="siddas", passwd="siddas@123", database="diztro_reports")
 
 mycursor = mydb.cursor()
 

@@ -23,7 +23,7 @@ from statsmodels.tsa.stattools import acf
 from statsmodels.tsa.stattools import pacf
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-mydb=mysql.connector.connect(host="43.224.157.214", user="siddas", passwd="siddas@123", database="diztro_reports")
+mydb=mysql.connector.connect(host="**.***.***.***", user="***", passwd="***", database="***")
 
 def mean_absolute_percentage_test_all_error(y_true, y_pred): 
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
