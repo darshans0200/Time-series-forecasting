@@ -8,6 +8,11 @@ Created on Wed Mar  6 09:36:29 2019
 # coding: utf-8
 
 # # SARIMA
+import logging
+
+logging.basicConfig(filename='output.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',level=logging.DEBUG)
+logging.info('program started') 
+
 import warnings
 import itertools
 import numpy as np
@@ -24,6 +29,7 @@ from statsmodels.tsa.stattools import pacf
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 mydb=mysql.connector.connect(host="**.***.***.***", user="***", passwd="***", database="***")
+logging.info(f'{mydb} DB connection established')
 
 def mean_absolute_percentage_test_all_error(y_true, y_pred): 
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
@@ -47,10 +53,10 @@ prod=prod.drop(['Createdt', 'CreateID','productId', 'productCategory','Updatedt'
 
 m=pd.merge(df, prod, on='Item_number_ID')
 products=m.Product.unique()
-print (products)
+logging.info(f'{products} - are the products details')
 
 for item in products:
-    print (item)
+    logging.info(f'{item} - the product at the factory level')
     if item=='MILK':
         continue
     paneer=m.loc[(m['Product']==item)]
@@ -95,11 +101,17 @@ for item in products:
                     lowest_parm = param
                     lowest_param_seasonal = param_seasonal
     
-                print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
+                #print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
+                logging.info(f'{param} - the pdq paramters')
+                logging.info(f'{param_seasonal} - the seasonal paramters')
+                logging.info(f'{results.aic} - the results AIC')
             except:
                 continue
             
-    print('The best model is: SARIMA{}x{} - AIC:{}'.format(lowest_parm, lowest_param_seasonal, lowest_aic))     
+    #print('The best model is: SARIMA{}x{} - AIC:{}'.format(lowest_parm, lowest_param_seasonal, lowest_aic))
+    logging.info(f'{lowest_parm} - the lowest param')
+    logging.info(f'{lowest_param_seasonal} - the lowest_param_seasonal')
+    logging.info(f'{lowest_aic} - the lowest_param_seasonal') 
 
     mod = sm.tsa.statespace.SARIMAX(paneer,
                                     order=lowest_parm,
@@ -125,17 +137,17 @@ for item in products:
     forecast_test_all.set_index('Stime', inplace=True)
     forecast_test_all_error = paneer['Quantity']-forecast_test_all['Quantity_predicated']
     mean_forecast_test_all_error = np.mean(forecast_test_all_error)
-    print(mean_forecast_test_all_error)
+    logging.info(f'{mean_forecast_test_all_error} - the mean_forecast_test_all_error')
     mean_absolute_test_all_error = np.mean( np.abs(forecast_test_all_error) )
-    print(mean_absolute_test_all_error)
+    logging.info(f'{mean_absolute_test_all_error} - the mean_absolute_test_all_error')
     mean_squared_test_all_error = np.mean(forecast_test_all_error*forecast_test_all_error)
-    print(mean_squared_test_all_error)
+    logging.info(f'{mean_squared_test_all_error} - the mean_squared_test_all_error')
     rmse_test_all = np.sqrt(mean_squared_test_all_error)
-    print(rmse_test_all)
+    logging.info(f'{rmse_test_all} - the rmse_test_all')
 
     MAPE= mean_absolute_percentage_test_all_error(paneer['Quantity'],forecast_test_all['Quantity_predicated'])
-    print('MAPE'+MAPE)
+    logging.info(f'{MAPE} - the MAPE error')
     pjme_all_test=pd.merge(paneer,forecast_test_all, left_index=True, right_index=True)
     MAPE= mean_absolute_percentage_test_all_error(pjme_all_test['Quantity'],pjme_all_test['Quantity_predicated'])
-    print('MAPE'+MAPE)
+    logging.info(f'{MAPE} - the MAPE error for overall')
     
